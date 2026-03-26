@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FitGear — AI 운동기구 & 루틴 추천</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --primary:#16a34a;--primary-dark:#15803d;--primary-light:#22c55e;
+  --accent:#f59e0b;--accent-dark:#d97706;
+  --bg:#0f0f0f;--bg2:#1a1a1a;--bg3:#252525;--bg4:#303030;
+  --text:#f0f0f0;--text2:#a0a0a0;--text3:#707070;
+  --radius:12px;--radius-lg:16px;
+  --shadow:0 4px 24px rgba(0,0,0,0.4);
+}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden;}
+a{color:var(--primary-light);text-decoration:none;}
+a:hover{text-decoration:underline;}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:8px;}
+::-webkit-scrollbar-track{background:var(--bg2);}
+::-webkit-scrollbar-thumb{background:var(--primary-dark);border-radius:4px;}
+
+/* Layout */
+.container{max-width:1200px;margin:0 auto;padding:0 20px;}
+
+/* Header */
+header{background:linear-gradient(180deg,rgba(22,163,74,0.15) 0%,transparent 100%);border-bottom:1px solid rgba(22,163,74,0.2);position:sticky;top:0;z-index:100;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);}
+.header-inner{display:flex;align-items:center;justify-content:space-between;padding:16px 0;}
+.logo{font-size:1.6rem;font-weight:900;display:flex;align-items:center;gap:8px;}
+.logo span{color:var(--primary-light);}
+.logo-icon{font-size:1.8rem;}
+.header-badge{background:var(--accent);color:#000;font-size:0.7rem;font-weight:700;padding:2px 8px;border-radius:20px;}
+
+/* Hero */
+.hero{padding:80px 0 60px;text-align:center;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle at 50% 50%,rgba(22,163,74,0.08) 0%,transparent 50%);pointer-events:none;}
+.hero h1{font-size:3rem;font-weight:900;margin-bottom:16px;line-height:1.2;}
+.hero h1 .green{color:var(--primary-light);}
+.hero h1 .yellow{color:var(--accent);}
+.hero p{font-size:1.15rem;color:var(--text2);max-width:600px;margin:0 auto 40px;}
+
+/* Input Area */
+.input-area{max-width:700px;margin:0 auto;position:relative;}
+.input-area textarea{width:100%;min-height:100px;padding:20px;background:var(--bg2);border:2px solid var(--bg4);border-radius:var(--radius-lg);color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:1.05rem;resize:vertical;transition:border-color 0.3s;}
+.input-area textarea:focus{outline:none;border-color:var(--primary);}
+.input-area textarea::placeholder{color:var(--text3);}
+.submit-btn{margin-top:16px;width:100%;padding:16px 32px;background:linear-gradient(135deg,var(--primary) 0%,var(--primary-dark) 100%);color:#fff;border:none;border-radius:var(--radius);font-size:1.1rem;font-weight:700;cursor:pointer;transition:all 0.3s;font-family:'Noto Sans KR',sans-serif;display:flex;align-items:center;justify-content:center;gap:10px;}
+.submit-btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(22,163,74,0.4);}
+.submit-btn:disabled{opacity:0.6;cursor:not-allowed;transform:none;box-shadow:none;}
+.submit-btn .spinner{display:none;width:20px;height:20px;border:3px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.8s linear infinite;}
+.submit-btn.loading .spinner{display:block;}
+.submit-btn.loading .btn-text{display:none;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* Examples */
+.examples{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:20px;}
+.example-chip{background:var(--bg3);border:1px solid var(--bg4);padding:8px 16px;border-radius:20px;font-size:0.85rem;cursor:pointer;transition:all 0.2s;color:var(--text2);}
+.example-chip:hover{background:var(--primary);border-color:var(--primary);color:#fff;}
+
+/* Coupang Banner */
+.coupang-banner{margin:40px auto;max-width:728px;text-align:center;}
+.coupang-banner a{display:block;}
+.coupang-banner img{max-width:100%;height:auto;border-radius:var(--radius);}
+
+/* Result Section */
+.result-section{padding:40px 0 80px;display:none;}
+.result-section.active{display:block;}
+.result-header{text-align:center;margin-bottom:40px;}
+.result-header h2{font-size:2rem;font-weight:900;margin-bottom:8px;}
+.result-header h2 .green{color:var(--primary-light);}
+.goal-badge{display:inline-block;background:rgba(22,163,74,0.15);border:1px solid rgba(22,163,74,0.3);color:var(--primary-light);padding:8px 20px;border-radius:20px;font-size:0.95rem;margin-top:8px;}
+
+/* Two Column Layout */
+.two-col{display:grid;grid-template-columns:1fr 300px;gap:30px;align-items:start;}
+
+/* Routine Table */
+.routine-section h3,.equip-section h3,.suppl-section h3{font-size:1.3rem;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.routine-table{width:100%;border-collapse:separate;border-spacing:0;background:var(--bg2);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow);}
+.routine-table thead{background:linear-gradient(135deg,var(--primary-dark),var(--primary));}
+.routine-table th{padding:14px 16px;text-align:left;font-weight:700;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.5px;color:#fff;}
+.routine-table td{padding:14px 16px;border-bottom:1px solid var(--bg3);font-size:0.95rem;}
+.routine-table tr:last-child td{border-bottom:none;}
+.routine-table tbody tr{transition:background 0.2s;}
+.routine-table tbody tr:hover{background:var(--bg3);}
+.muscle-tag{background:rgba(22,163,74,0.15);color:var(--primary-light);padding:3px 10px;border-radius:10px;font-size:0.8rem;font-weight:500;}
+
+/* Cards */
+.card{background:var(--bg2);border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow);border:1px solid var(--bg3);transition:transform 0.2s,border-color 0.2s;margin-bottom:16px;}
+.card:hover{transform:translateY(-3px);border-color:var(--primary);}
+.card-emoji{font-size:2rem;margin-bottom:8px;}
+.card-name{font-weight:700;font-size:1.05rem;margin-bottom:4px;}
+.card-price{color:var(--accent);font-weight:700;font-size:0.9rem;margin-bottom:6px;}
+.card-reason{color:var(--text2);font-size:0.88rem;margin-bottom:14px;line-height:1.5;}
+.coupang-btn{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,var(--accent),var(--accent-dark));color:#000;padding:10px 18px;border-radius:8px;font-size:0.88rem;font-weight:700;transition:all 0.2s;text-decoration:none !important;border:none;cursor:pointer;}
+.coupang-btn:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(245,158,11,0.4);text-decoration:none !important;}
+.coupang-btn img{width:16px;height:16px;}
+
+/* Sidebar */
+.sidebar{position:sticky;top:90px;}
+.sidebar .side-banner{background:var(--bg2);border-radius:var(--radius-lg);padding:20px;text-align:center;margin-bottom:16px;border:1px solid var(--bg3);}
+.sidebar .side-banner a{display:block;}
+.sidebar .side-banner img{max-width:100%;height:auto;border-radius:8px;}
+.sidebar .side-banner p{font-size:0.75rem;color:var(--text3);margin-top:8px;}
+
+/* Equipment Grid */
+.equip-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;}
+
+/* Supplement Grid */
+.suppl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;margin-top:30px;}
+
+/* Error */
+.error-msg{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:#f87171;padding:16px 20px;border-radius:var(--radius);text-align:center;margin-top:20px;display:none;}
+.error-msg.active{display:block;}
+
+/* Footer */
+footer{background:var(--bg2);border-top:1px solid var(--bg3);padding:30px 0;margin-top:60px;}
+.footer-inner{text-align:center;}
+.footer-inner p{color:var(--text3);font-size:0.82rem;line-height:1.7;}
+.footer-inner .disclaimer{max-width:600px;margin:12px auto 0;color:var(--text3);font-size:0.75rem;line-height:1.6;opacity:0.8;}
+
+/* Scroll to Top */
+.scroll-top{position:fixed;bottom:30px;right:30px;width:48px;height:48px;background:var(--primary);color:#fff;border:none;border-radius:50%;font-size:1.2rem;cursor:pointer;opacity:0;visibility:hidden;transition:all 0.3s;z-index:999;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(22,163,74,0.4);}
+.scroll-top.visible{opacity:1;visibility:visible;}
+.scroll-top:hover{background:var(--primary-dark);transform:translateY(-3px);}
+
+/* Loading skeleton */
+.skeleton{background:linear-gradient(90deg,var(--bg3) 25%,var(--bg4) 50%,var(--bg3) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:var(--radius);height:200px;margin:20px 0;}
+@keyframes shimmer{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+
+/* Responsive */
+@media(max-width:900px){
+  .two-col{grid-template-columns:1fr;}
+  .sidebar{position:static;display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .hero h1{font-size:2.2rem;}
+}
+@media(max-width:600px){
+  .hero h1{font-size:1.7rem;}
+  .hero p{font-size:1rem;}
+  .routine-table{font-size:0.85rem;}
+  .routine-table th,.routine-table td{padding:10px 10px;}
+  .sidebar{grid-template-columns:1fr;}
+  .equip-grid{grid-template-columns:1fr;}
+  .examples{gap:6px;}
+  .example-chip{font-size:0.78rem;padding:6px 12px;}
+}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header>
+  <div class="container header-inner">
+    <div class="logo">
+      <span class="logo-icon">💪</span>
+      Fit<span>Gear</span>
+      <span class="header-badge">AI</span>
+    </div>
+    <div style="font-size:0.85rem;color:var(--text2);">AI 맞춤 운동 추천</div>
+  </div>
+</header>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="container">
+    <h1>목표를 말하면<br><span class="green">AI가 운동루틴</span>과<br><span class="yellow">운동기구</span>를 추천해요</h1>
+    <p>"집에서 뱃살 빼고 싶어" 같이 운동 목표를 입력하면,<br>AI가 맞춤 루틴과 필요한 기구를 알려드려요.</p>
+
+    <div class="input-area">
+      <textarea id="goalInput" placeholder="운동 목표를 자유롭게 입력하세요. 예: 집에서 뱃살 빼고 싶어"></textarea>
+      <button class="submit-btn" id="submitBtn" onclick="getRecommendation()">
+        <span class="btn-text">🤖 AI 루틴 추천 받기</span>
+        <div class="spinner"></div>
+      </button>
+      <div class="examples">
+        <span class="example-chip" onclick="setExample(this)">집에서 뱃살 빼고 싶어</span>
+        <span class="example-chip" onclick="setExample(this)">어깨 넓어지고 싶어</span>
+        <span class="example-chip" onclick="setExample(this)">러닝 시작하려는데 뭐 필요해?</span>
+        <span class="example-chip" onclick="setExample(this)">홈트 초보 전신운동</span>
+        <span class="example-chip" onclick="setExample(this)">하체 근력 키우기</span>
+      </div>
+    </div>
+
+    <div class="error-msg" id="errorMsg"></div>
+  </div>
+</section>
+
+<!-- Coupang Banner Top -->
+<div class="coupang-banner">
+  <a href="https://link.coupang.com/a/cmb4De" target="_blank" rel="noopener noreferrer" referrerpolicy="unsafe-url">
+    <img src="https://ads-partners.coupang.com/banners/764064?subId=fitgear&traceId=V0-301-f1e5ab2b58ee9cf1-I764064&w=728&h=90" alt="쿠팡 추천">
+  </a>
+</div>
+
+<!-- Result Section -->
+<section class="result-section" id="resultSection">
+  <div class="container">
+    <div class="result-header">
+      <h2>🎯 맞춤 <span class="green">운동 플랜</span></h2>
+      <div class="goal-badge" id="goalBadge"></div>
+    </div>
+
+    <div class="two-col">
+      <div class="main-content">
+        <!-- Routine -->
+        <div class="routine-section">
+          <h3>🏋️ 추천 운동 루틴</h3>
+          <table class="routine-table">
+            <thead>
+              <tr><th>운동</th><th>세트</th><th>반복</th><th>부위</th></tr>
+            </thead>
+            <tbody id="routineBody"></tbody>
+          </table>
+        </div>
+
+        <!-- Equipment -->
+        <div class="equip-section" style="margin-top:40px;">
+          <h3>🛒 추천 운동기구</h3>
+          <div class="equip-grid" id="equipGrid"></div>
+        </div>
+
+        <!-- Supplements -->
+        <div class="suppl-section" id="supplSection" style="margin-top:40px;display:none;">
+          <h3>💊 추천 보충제</h3>
+          <div class="suppl-grid" id="supplGrid"></div>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <div class="side-banner">
+          <a href="https://link.coupang.com/a/cmb4De" target="_blank" rel="noopener noreferrer" referrerpolicy="unsafe-url">
+            <img src="https://ads-partners.coupang.com/banners/764064?subId=fitgear_side&traceId=V0-301-f1e5ab2b58ee9cf1-I764064&w=300&h=250" alt="쿠팡 추천">
+          </a>
+          <p>이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</p>
+        </div>
+        <div class="side-banner">
+          <a href="https://link.coupang.com/a/cmb4De" target="_blank" rel="noopener noreferrer" referrerpolicy="unsafe-url">
+            <img src="https://ads-partners.coupang.com/banners/764064?subId=fitgear_side&traceId=V0-301-f1e5ab2b58ee9cf1-I764064&w=300&h=250" alt="쿠팡 추천">
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="container footer-inner">
+    <p><strong>FitGear</strong> — AI 맞춤 운동기구 & 루틴 추천 서비스</p>
+    <div class="disclaimer">
+      이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.<br>
+      본 사이트의 추천은 AI에 의해 생성되며, 전문 의료/운동 상담을 대체하지 않습니다.<br>
+      운동 전 전문가와 상담하시기를 권장합니다.
+    </div>
+  </div>
+</footer>
+
+<!-- Scroll to Top -->
+<button class="scroll-top" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+// --- API Key (obfuscated) ---
+const _EK = 'LawFinder2026!@#';
+function _d(e){const d=atob(e);let r='';for(let i=0;i<d.length;i++)r+=String.fromCharCode(d.charCodeAt(i)^_EK.charCodeAt(i%_EK.length));return r;}
+const _KEYS = { ai: _d('PwpaNhsBDkgIRFNFQEoVSjgRQiIQXwsgFHADfgJVdFV+KS4ALTQrLh1XAGsCVCtqDlIhBDMEKhEwYXt4UxkFUQALPwIOLzs3RlRRU05pFmYrCyN1KwIGDjR4Y2VnGBBIeQtCBw4HISQqY3FCWUh2YhZYIApRBBcwPmpyWFtoLnwWVCI2LwFRCTNDdntVdHkVHBEoMFpYJlc3VkJjUE83Ty4xAAc=') };
+
+// --- Helpers ---
+function setExample(el) {
+  document.getElementById('goalInput').value = el.textContent;
+  document.getElementById('goalInput').focus();
+}
+
+function cleanJson(raw) {
+  let s = raw.trim();
+  // Remove markdown code fences
+  s = s.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '');
+  s = s.trim();
+  return JSON.parse(s);
+}
+
+function makeCoupangUrl(query) {
+  return `https://www.coupang.com/np/search?q=${encodeURIComponent(query)}&channel=user&src=1032001&spec=10305010&addtag=400&ctag=fitgear&lptag=AF7220529`;
+}
+
+// --- Scroll to Top ---
+window.addEventListener('scroll', () => {
+  const btn = document.getElementById('scrollTopBtn');
+  if (window.scrollY > 400) btn.classList.add('visible');
+  else btn.classList.remove('visible');
+});
+
+// --- Main Function ---
+async function getRecommendation() {
+  const goal = document.getElementById('goalInput').value.trim();
+  if (!goal) { showError('운동 목표를 입력해주세요!'); return; }
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.classList.add('loading');
+  hideError();
+
+  const systemPrompt = `당신은 운동/피트니스 전문가입니다. 사용자의 목표에 맞는 운동 루틴과 필요한 운동기구를 추천합니다. 반드시 아래 JSON 형식으로만 응답하세요. JSON 외 다른 텍스트는 포함하지 마세요.
+{"goal":"목표정리","routine":[{"name":"운동명","sets":"세트수","reps":"반복수","muscle":"부위","emoji":"이모지"}],"equipment":[{"name":"기구명","price":"가격대","reason":"필요이유","emoji":"이모지","searchQuery":"쿠팡검색어"}],"supplements":[{"name":"보충제","reason":"이유","searchQuery":"쿠팡검색어"}]}`;
+
+  try {
+    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${_KEYS.ai}` },
+      body: JSON.stringify({
+        model: 'gpt-4o-mini',
+        temperature: 0.6,
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: goal }
+        ]
+      })
+    });
+
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      throw new Error(errData.error?.message || `API 오류 (${res.status})`);
+    }
+
+    const data = await res.json();
+    const raw = data.choices[0].message.content;
+    const result = cleanJson(raw);
+    renderResult(result, goal);
+  } catch (err) {
+    showError('추천을 가져오는 중 오류가 발생했습니다: ' + err.message);
+  } finally {
+    btn.disabled = false;
+    btn.classList.remove('loading');
+  }
+}
+
+function showError(msg) {
+  const el = document.getElementById('errorMsg');
+  el.textContent = msg;
+  el.classList.add('active');
+}
+function hideError() {
+  document.getElementById('errorMsg').classList.remove('active');
+}
+
+function renderResult(data, goal) {
+  // Goal badge
+  document.getElementById('goalBadge').textContent = `🎯 ${data.goal || goal}`;
+
+  // Routine table
+  const tbody = document.getElementById('routineBody');
+  tbody.innerHTML = data.routine.map(r => `
+    <tr>
+      <td>${r.emoji || '🏃'} ${r.name}</td>
+      <td>${r.sets}</td>
+      <td>${r.reps}</td>
+      <td><span class="muscle-tag">${r.muscle}</span></td>
+    </tr>
+  `).join('');
+
+  // Equipment cards
+  const equipGrid = document.getElementById('equipGrid');
+  equipGrid.innerHTML = data.equipment.map(eq => `
+    <div class="card">
+      <div class="card-emoji">${eq.emoji || '🏋️'}</div>
+      <div class="card-name">${eq.name}</div>
+      <div class="card-price">${eq.price || ''}</div>
+      <div class="card-reason">${eq.reason}</div>
+      <a class="coupang-btn" href="${makeCoupangUrl(eq.searchQuery)}" target="_blank" rel="noopener noreferrer">
+        🛒 쿠팡에서 구매
+      </a>
+    </div>
+  `).join('');
+
+  // Supplements
+  const supplSection = document.getElementById('supplSection');
+  const supplGrid = document.getElementById('supplGrid');
+  if (data.supplements && data.supplements.length > 0) {
+    supplSection.style.display = 'block';
+    supplGrid.innerHTML = data.supplements.map(s => `
+      <div class="card">
+        <div class="card-emoji">💊</div>
+        <div class="card-name">${s.name}</div>
+        <div class="card-reason">${s.reason}</div>
+        <a class="coupang-btn" href="${makeCoupangUrl(s.searchQuery)}" target="_blank" rel="noopener noreferrer">
+          🛒 쿠팡에서 구매
+        </a>
+      </div>
+    `).join('');
+  } else {
+    supplSection.style.display = 'none';
+  }
+
+  // Show result section and scroll
+  const resultSection = document.getElementById('resultSection');
+  resultSection.classList.add('active');
+  setTimeout(() => {
+    resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 100);
+}
+</script>
+</body>
+</html>
