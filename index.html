@@ -215,6 +215,22 @@ footer{background:var(--bg2);border-top:1px solid var(--bg3);padding:28px 0;marg
 .footer-inner .disclaimer{max-width:620px;margin:12px auto 0;color:var(--text3);font-size:0.74rem;line-height:1.7;opacity:0.9;}
 
 /* ========== Scroll to Top ========== */
+/* ========== Save / Load Routine ========== */
+.save-routine-bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;justify-content:center;}
+.save-btn,.load-btn{display:inline-flex;align-items:center;gap:6px;background:var(--bg2);border:2px solid var(--bg3);padding:10px 22px;border-radius:var(--radius);font-size:0.88rem;font-weight:600;cursor:pointer;transition:all 0.25s;color:var(--text);font-family:'Noto Sans KR',sans-serif;}
+.save-btn:hover{border-color:var(--primary);color:var(--primary);background:rgba(22,163,74,0.06);}
+.load-btn:hover{border-color:var(--accent);color:var(--accent-dark);background:rgba(245,158,11,0.06);}
+
+/* ========== Timer ========== */
+.timer-btn{display:inline-flex;align-items:center;gap:4px;background:none;border:1px solid var(--bg3);border-radius:8px;padding:4px 10px;font-size:0.75rem;font-weight:600;cursor:pointer;color:var(--text2);transition:all 0.2s;font-family:inherit;}
+.timer-btn:hover{border-color:var(--primary);color:var(--primary);}
+.timer-btn.active{border-color:var(--accent);color:var(--accent);background:rgba(245,158,11,0.08);}
+.timer-display{font-size:0.82rem;font-weight:700;color:var(--accent);margin-left:6px;}
+
+/* ========== Toast ========== */
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);background:#1a1a1a;color:#fff;padding:12px 28px;border-radius:var(--radius);font-size:0.88rem;font-weight:500;box-shadow:0 8px 30px rgba(0,0,0,0.25);z-index:10000;opacity:0;transition:all 0.3s;pointer-events:none;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:auto;}
+
 .scroll-top{position:fixed;bottom:30px;right:30px;width:46px;height:46px;background:var(--primary);color:#fff;border:none;border-radius:50%;font-size:1.1rem;cursor:pointer;opacity:0;visibility:hidden;transition:all 0.3s;z-index:999;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(22,163,74,0.35);}
 .scroll-top.visible{opacity:1;visibility:visible;}
 .scroll-top:hover{background:var(--primary-dark);transform:translateY(-3px);}
@@ -335,6 +351,12 @@ footer{background:var(--bg2);border-top:1px solid var(--bg3);padding:28px 0;marg
       <div class="goal-badge" id="goalBadge"></div>
     </div>
 
+    <!-- Save / Load Routine -->
+    <div class="save-routine-bar fade-in">
+      <button class="save-btn" onclick="saveRoutine()">💾 루틴 저장하기</button>
+      <button class="load-btn" onclick="loadRoutine()" id="loadRoutineBtn" style="display:none;">📂 저장된 루틴 불러오기</button>
+    </div>
+
     <!-- Visual Timeline -->
     <div class="timeline fade-in">
       <div class="timeline-step">
@@ -446,6 +468,9 @@ footer{background:var(--bg2);border-top:1px solid var(--bg3);padding:28px 0;marg
     <p style="font-size:0.65rem;color:var(--text3);opacity:0.7;margin-top:10px;">이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</p>
   </div>
 </footer>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
 
 <!-- Scroll to Top -->
 <button class="scroll-top" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
@@ -724,16 +749,19 @@ function renderResult(data, goal) {
   const oldBox = document.querySelectorAll('#weeklyPlanBox');
   if (oldBox.length > 1) oldBox[0].remove();
 
-  tbody.innerHTML = data.routine.map(r => `
+  tbody.innerHTML = data.routine.map((r, ri) => {
+    const restSec = parseRestSeconds(r.rest);
+    const timerHtml = restSec > 0 ? ` <button class="timer-btn" onclick="startRestTimer(this, ${restSec})" title="세트 간 휴식 타이머">⏱ 휴식 타이머</button><span class="timer-display" id="timer-${ri}"></span>` : '';
+    return `
     <tr>
-      <td>${r.emoji || '🏃'} ${r.name}${r.day ? ' <span style="font-size:0.72rem;color:var(--primary);background:rgba(22,163,74,0.08);padding:2px 6px;border-radius:8px;">' + r.day + '</span>' : ''}${r.rest ? ' <span style="font-size:0.72rem;color:var(--text2);background:var(--bg);padding:2px 6px;border-radius:8px;">⏱ ' + r.rest + '</span>' : ''}</td>
+      <td>${r.emoji || '🏃'} ${r.name}${r.day ? ' <span style="font-size:0.72rem;color:var(--primary);background:rgba(22,163,74,0.08);padding:2px 6px;border-radius:8px;">' + r.day + '</span>' : ''}${r.rest ? ' <span style="font-size:0.72rem;color:var(--text2);background:var(--bg);padding:2px 6px;border-radius:8px;">⏱ ' + r.rest + '</span>' : ''}${timerHtml}</td>
       <td>${r.sets}</td>
       <td>${r.reps}</td>
       <td><span class="muscle-tag ${getMuscleClass(r.muscle)}">${r.muscle}</span></td>
     </tr>
     ${r.form ? '<tr><td colspan="4" style="font-size:0.82rem;color:var(--primary);padding:4px 16px 8px;border-bottom:none;">📖 <strong>자세:</strong> ' + r.form + '</td></tr>' : ''}
     ${r.caution ? '<tr><td colspan="4" style="font-size:0.82rem;color:var(--accent-dark);padding:4px 16px 12px;border-bottom:1px solid var(--bg3);">⚠️ <strong>주의:</strong> ' + r.caution + '</td></tr>' : ''}
-  `).join('');
+  `}).join('');
 
   // Equipment cards
   const equipGrid = document.getElementById('equipGrid');
@@ -789,6 +817,95 @@ document.getElementById('goalInput').addEventListener('keydown', function(e) {
     getRecommendation();
   }
 });
+
+// ========== Toast ==========
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2500);
+}
+
+// ========== Save / Load Routine ==========
+let lastResultData = null;
+let lastGoalText = '';
+
+const origRenderResult = renderResult;
+renderResult = function(data, goal) {
+  lastResultData = data;
+  lastGoalText = goal;
+  origRenderResult(data, goal);
+  // Show load btn if there's a saved routine
+  if (localStorage.getItem('fitgear-saved-routine')) {
+    document.getElementById('loadRoutineBtn').style.display = 'inline-flex';
+  }
+};
+
+function saveRoutine() {
+  if (!lastResultData) { showToast('저장할 루틴이 없습니다.'); return; }
+  const saveData = { goal: lastGoalText, data: lastResultData, savedAt: new Date().toISOString() };
+  localStorage.setItem('fitgear-saved-routine', JSON.stringify(saveData));
+  document.getElementById('loadRoutineBtn').style.display = 'inline-flex';
+  showToast('💾 루틴이 저장되었습니다!');
+}
+
+function loadRoutine() {
+  const saved = localStorage.getItem('fitgear-saved-routine');
+  if (!saved) { showToast('저장된 루틴이 없습니다.'); return; }
+  try {
+    const parsed = JSON.parse(saved);
+    renderResult(parsed.data, parsed.goal);
+    showToast('📂 저장된 루틴을 불러왔습니다!');
+  } catch(e) {
+    showToast('불러오기에 실패했습니다.');
+  }
+}
+
+// Show load btn on page load if saved
+if (localStorage.getItem('fitgear-saved-routine')) {
+  document.getElementById('loadRoutineBtn').style.display = 'inline-flex';
+}
+
+// ========== Rest Timer ==========
+let activeTimers = {};
+
+function parseRestSeconds(restStr) {
+  if (!restStr) return 0;
+  const match = restStr.match(/(\d+)/);
+  return match ? parseInt(match[1]) : 60;
+}
+
+function startRestTimer(btn, seconds) {
+  const display = btn.nextElementSibling;
+  if (!display) return;
+
+  // If already running, stop it
+  if (btn.classList.contains('active')) {
+    btn.classList.remove('active');
+    clearInterval(activeTimers[btn.id || 'timer']);
+    display.textContent = '';
+    return;
+  }
+
+  btn.classList.add('active');
+  let remaining = seconds;
+  display.textContent = remaining + '초';
+
+  const timerId = setInterval(() => {
+    remaining--;
+    if (remaining <= 0) {
+      clearInterval(timerId);
+      btn.classList.remove('active');
+      display.textContent = '완료!';
+      showToast('⏰ 휴식 시간 종료! 다음 세트 시작하세요!');
+      setTimeout(() => { display.textContent = ''; }, 2000);
+    } else {
+      display.textContent = remaining + '초';
+    }
+  }, 1000);
+
+  activeTimers[btn.id || 'timer'] = timerId;
+}
 </script>
 </body>
 </html>
