@@ -166,8 +166,8 @@ header{background:var(--header-bg);border-bottom:1px solid var(--bg3);position:s
 .card-price{display:inline-block;background:rgba(245,158,11,0.12);color:var(--accent-dark);font-weight:700;font-size:0.82rem;padding:3px 10px;border-radius:8px;margin-bottom:8px;}
 [data-theme="dark"] .card-price{color:var(--accent);}
 .card-reason{color:var(--text2);font-size:0.88rem;margin-bottom:14px;line-height:1.6;}
-.coupang-btn{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,var(--accent),var(--accent-dark));color:#000;padding:10px 18px;border-radius:8px;font-size:0.86rem;font-weight:700;transition:all 0.2s;text-decoration:none !important;border:none;cursor:pointer;}
-.coupang-btn:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(245,158,11,0.35);text-decoration:none !important;}
+.coupang-btn{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;padding:10px 18px;border-radius:8px;font-size:0.86rem;font-weight:700;transition:all 0.2s;text-decoration:none !important;border:none;cursor:pointer;}
+.coupang-btn:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(22,163,74,0.35);text-decoration:none !important;}
 
 /* Grids */
 .equip-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;}
@@ -364,36 +364,25 @@ footer{background:var(--bg2);border-top:1px solid var(--bg3);padding:28px 0;marg
           </table>
         </div>
 
-        <!-- Mid Ad -->
-        <div class="mid-ad fade-in" style="margin-top:36px;">
-          <span class="ad-label">AD</span>
-          <a href="https://link.coupang.com/a/cmb4De" target="_blank" rel="noopener noreferrer" referrerpolicy="unsafe-url">
-            <img src="https://ads-partners.coupang.com/banners/764064?subId=fitgear&traceId=V0-301-f1e5ab2b58ee9cf1-I764064&w=728&h=90" alt="쿠팡 추천">
-          </a>
-        </div>
-
         <!-- Step 2: Equipment -->
         <div class="equip-section fade-in" style="margin-top:36px;">
           <h3 class="section-title">🛒 추천 운동기구</h3>
           <div class="equip-grid" id="equipGrid"></div>
         </div>
 
-        <!-- Step 3: Supplements -->
+        <!-- Step 3: Supplements (토글) -->
         <div class="suppl-section fade-in" id="supplSection" style="margin-top:36px;display:none;">
-          <h3 class="section-title">💊 추천 보충제</h3>
-          <div class="suppl-grid" id="supplGrid"></div>
+          <div style="display:flex;align-items:center;gap:10px;cursor:pointer;" onclick="document.getElementById('supplGrid').style.display=document.getElementById('supplGrid').style.display==='none'?'grid':'none';this.querySelector('.suppl-arrow').textContent=document.getElementById('supplGrid').style.display==='none'?'▶':'▼';">
+            <h3 class="section-title" style="margin-bottom:0;">💊 추천 보충제</h3>
+            <span class="suppl-arrow" style="font-size:0.8rem;color:var(--text2);">▶</span>
+            <span style="font-size:0.78rem;color:var(--text3);">(클릭하여 펼치기)</span>
+          </div>
+          <div class="suppl-grid" id="supplGrid" style="display:none;"></div>
         </div>
       </div>
 
       <!-- Sidebar -->
       <div class="sidebar">
-        <div class="side-banner">
-          <span class="ad-label-side">AD</span>
-          <a href="https://link.coupang.com/a/cmb4De" target="_blank" rel="noopener noreferrer" referrerpolicy="unsafe-url">
-            <img src="https://ads-partners.coupang.com/banners/764064?subId=fitgear_side&traceId=V0-301-f1e5ab2b58ee9cf1-I764064&w=300&h=250" alt="쿠팡 추천">
-          </a>
-          <p>이 포스팅은 쿠팡 파트너스 활동의 일환으로,<br>이에 따른 일정액의 수수료를 제공받습니다.</p>
-        </div>
         <div class="side-banner">
           <span class="ad-label-side">AD</span>
           <a href="https://link.coupang.com/a/cmb4De" target="_blank" rel="noopener noreferrer" referrerpolicy="unsafe-url">
@@ -451,10 +440,10 @@ footer{background:var(--bg2);border-top:1px solid var(--bg3);padding:28px 0;marg
   <div class="container footer-inner">
     <p><strong>FitGear</strong> — AI 맞춤 운동기구 & 루틴 추천 서비스</p>
     <div class="disclaimer">
-      이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.<br>
       본 사이트의 추천은 AI에 의해 생성되며, 전문 의료/운동 상담을 대체하지 않습니다.<br>
       운동 전 전문가와 상담하시기를 권장합니다.
     </div>
+    <p style="font-size:0.65rem;color:var(--text3);opacity:0.7;margin-top:10px;">이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</p>
   </div>
 </footer>
 
@@ -612,8 +601,16 @@ async function getRecommendation() {
   resultSection.classList.remove('active');
   resultSection.style.display = 'none';
 
-  const systemPrompt = `당신은 운동/피트니스 전문가입니다. 사용자의 목표에 맞는 운동 루틴과 필요한 운동기구를 추천합니다. 반드시 아래 JSON 형식으로만 응답하세요. JSON 외 다른 텍스트는 포함하지 마세요.
-{"goal":"목표정리","routine":[{"name":"운동명","sets":"세트수","reps":"반복수","muscle":"부위","emoji":"이모지"}],"equipment":[{"name":"기구명","price":"가격대","reason":"필요이유","emoji":"이모지","searchQuery":"쿠팡검색어"}],"supplements":[{"name":"보충제","reason":"이유","searchQuery":"쿠팡검색어"}]}`;
+  const systemPrompt = `당신은 운동/피트니스 전문가이자 스포츠 과학 전문가입니다. 사용자의 목표에 맞는 운동 루틴과 필요한 운동기구를 추천합니다.
+
+추천 시 반드시 다음을 포함하세요:
+1. 운동 루틴은 "월/수/금" 스플릿과 "화/목/토" 스플릿으로 나누어 주간 스케줄 제시
+2. 각 운동별 올바른 자세 포인트 1가지와 주의사항 1가지
+3. 운동기구는 초보자도 사용하기 쉬운 순서로 정렬하고, 가격대를 구체적으로 (예: "1만원~3만원")
+4. 보충제는 꼭 필요한 경우만 2~3개 이내로 추천
+
+반드시 아래 JSON 형식으로만 응답하세요. JSON 외 다른 텍스트는 포함하지 마세요.
+{"goal":"목표정리","weeklyPlan":{"monWedFri":"월/수/금 운동 요약","tueThuSat":"화/목/토 운동 요약"},"routine":[{"name":"운동명","sets":"세트수","reps":"반복수","muscle":"부위","emoji":"이모지","day":"월수금 또는 화목토","caution":"주의사항 1가지"}],"equipment":[{"name":"기구명","price":"가격대(구체적)","reason":"필요이유 (상세히)","emoji":"이모지","searchQuery":"쿠팡검색어"}],"supplements":[{"name":"보충제","reason":"이유","searchQuery":"쿠팡검색어"}]}`;
 
   try {
     const res = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -653,15 +650,35 @@ function renderResult(data, goal) {
   // Goal badge
   document.getElementById('goalBadge').textContent = '🎯 ' + (data.goal || goal);
 
+  // Weekly plan summary
+  const weeklyHtml = data.weeklyPlan ? `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px;">
+      <div style="background:rgba(22,163,74,0.06);border:1px solid rgba(22,163,74,0.2);border-radius:var(--radius);padding:16px;">
+        <strong style="color:var(--primary);">📅 월/수/금</strong>
+        <p style="font-size:0.9rem;color:var(--text2);margin-top:6px;">${data.weeklyPlan.monWedFri || ''}</p>
+      </div>
+      <div style="background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.2);border-radius:var(--radius);padding:16px;">
+        <strong style="color:var(--accent-dark);">📅 화/목/토</strong>
+        <p style="font-size:0.9rem;color:var(--text2);margin-top:6px;">${data.weeklyPlan.tueThuSat || ''}</p>
+      </div>
+    </div>
+  ` : '';
+
   // Routine table
   const tbody = document.getElementById('routineBody');
+  tbody.parentElement.insertAdjacentHTML('beforebegin', weeklyHtml.replace(/<div style="display:grid/, '<div id="weeklyPlanBox" style="display:grid'));
+  // Remove old weekly plan box if re-searching
+  const oldBox = document.querySelectorAll('#weeklyPlanBox');
+  if (oldBox.length > 1) oldBox[0].remove();
+
   tbody.innerHTML = data.routine.map(r => `
     <tr>
-      <td>${r.emoji || '🏃'} ${r.name}</td>
+      <td>${r.emoji || '🏃'} ${r.name}${r.day ? ' <span style="font-size:0.72rem;color:var(--primary);background:rgba(22,163,74,0.08);padding:2px 6px;border-radius:8px;">' + r.day + '</span>' : ''}</td>
       <td>${r.sets}</td>
       <td>${r.reps}</td>
       <td><span class="muscle-tag ${getMuscleClass(r.muscle)}">${r.muscle}</span></td>
     </tr>
+    ${r.caution ? '<tr><td colspan="4" style="font-size:0.82rem;color:var(--accent-dark);padding:4px 16px 12px;border-bottom:1px solid var(--bg3);">⚠️ ' + r.caution + '</td></tr>' : ''}
   `).join('');
 
   // Equipment cards
@@ -673,7 +690,7 @@ function renderResult(data, goal) {
       ${eq.price ? '<div class="card-price">' + eq.price + '</div>' : ''}
       <div class="card-reason">${eq.reason}</div>
       <a class="coupang-btn" href="${makeCoupangUrl(eq.searchQuery)}" target="_blank" rel="noopener noreferrer">
-        🛒 쿠팡에서 구매
+        🔍 최저가 보기
       </a>
     </div>
   `).join('');
@@ -689,7 +706,7 @@ function renderResult(data, goal) {
         <div class="card-name">${s.name}</div>
         <div class="card-reason">${s.reason}</div>
         <a class="coupang-btn" href="${makeCoupangUrl(s.searchQuery)}" target="_blank" rel="noopener noreferrer">
-          🛒 쿠팡에서 구매
+          🔍 최저가 보기
         </a>
       </div>
     `).join('');
