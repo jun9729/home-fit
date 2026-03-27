@@ -4,19 +4,50 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FitGear — AI 운동기구 & 루틴 추천</title>
+<meta name="description" content="AI가 운동 목표에 맞는 맞춤 루틴과 필요한 운동기구를 추천합니다. 홈트레이닝 시작하세요!">
+<meta name="keywords" content="운동기구추천,홈트레이닝,AI운동,운동루틴,홈짐">
+<meta property="og:type" content="website">
+<meta property="og:title" content="FitGear — AI 운동기구 & 루틴 추천">
+<meta property="og:description" content="AI가 운동 목표에 맞는 맞춤 루틴과 필요한 운동기구를 추천합니다.">
+<meta property="og:url" content="https://fitgear.pages.dev">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="FitGear — AI 운동기구 & 루틴 추천">
+<meta name="twitter:description" content="AI가 운동 목표에 맞는 맞춤 루틴과 필요한 운동기구를 추천합니다.">
+<link rel="canonical" href="https://fitgear.pages.dev">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
+
+/* ========== Light (default) ========== */
 :root{
   --primary:#16a34a;--primary-dark:#15803d;--primary-light:#22c55e;
   --accent:#f59e0b;--accent-dark:#d97706;
+  --bg:#f7f8fa;--bg2:#ffffff;--bg3:#e5e7eb;--bg4:#d1d5db;
+  --text:#111827;--text2:#6b7280;--text3:#9ca3af;
+  --card-border:#e5e7eb;
+  --radius:12px;--radius-lg:16px;
+  --shadow:0 4px 24px rgba(0,0,0,0.08);
+  --shadow-lg:0 8px 40px rgba(0,0,0,0.12);
+  --header-bg:rgba(255,255,255,0.85);
+  --hero-grad:linear-gradient(135deg,rgba(22,163,74,0.08) 0%,rgba(34,197,94,0.04) 100%);
+  --table-head:linear-gradient(135deg,var(--primary-dark),var(--primary));
+  --skeleton-a:var(--bg3);--skeleton-b:var(--bg4);
+}
+
+/* ========== Dark mode ========== */
+[data-theme="dark"]{
   --bg:#0f0f0f;--bg2:#1a1a1a;--bg3:#252525;--bg4:#303030;
   --text:#f0f0f0;--text2:#a0a0a0;--text3:#707070;
-  --radius:12px;--radius-lg:16px;
-  --shadow:0 4px 24px rgba(0,0,0,0.4);
+  --card-border:#303030;
+  --shadow:0 4px 24px rgba(0,0,0,0.5);
+  --shadow-lg:0 8px 40px rgba(0,0,0,0.6);
+  --header-bg:rgba(15,15,15,0.85);
+  --hero-grad:linear-gradient(135deg,rgba(22,163,74,0.1) 0%,rgba(34,197,94,0.04) 100%);
+  --skeleton-a:#252525;--skeleton-b:#303030;
 }
-body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden;}
-a{color:var(--primary-light);text-decoration:none;}
+
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;overflow-x:hidden;transition:background 0.3s,color 0.3s;}
+a{color:var(--primary);text-decoration:none;}
 a:hover{text-decoration:underline;}
 
 /* Scrollbar */
@@ -27,125 +58,195 @@ a:hover{text-decoration:underline;}
 /* Layout */
 .container{max-width:1200px;margin:0 auto;padding:0 20px;}
 
-/* Header */
-header{background:linear-gradient(180deg,rgba(22,163,74,0.15) 0%,transparent 100%);border-bottom:1px solid rgba(22,163,74,0.2);position:sticky;top:0;z-index:100;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);}
-.header-inner{display:flex;align-items:center;justify-content:space-between;padding:16px 0;}
-.logo{font-size:1.6rem;font-weight:900;display:flex;align-items:center;gap:8px;}
-.logo span{color:var(--primary-light);}
-.logo-icon{font-size:1.8rem;}
-.header-badge{background:var(--accent);color:#000;font-size:0.7rem;font-weight:700;padding:2px 8px;border-radius:20px;}
+/* ========== Header (sticky nav) ========== */
+header{background:var(--header-bg);border-bottom:1px solid var(--bg3);position:sticky;top:0;z-index:100;backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);transition:background 0.3s;}
+.header-inner{display:flex;align-items:center;justify-content:space-between;padding:14px 0;}
+.header-left{display:flex;align-items:center;gap:12px;}
+.logo{font-size:1.5rem;font-weight:900;display:flex;align-items:center;gap:6px;}
+.logo span{color:var(--primary);}
+.logo-icon{font-size:1.6rem;}
+.header-badge{background:var(--accent);color:#000;font-size:0.65rem;font-weight:700;padding:2px 8px;border-radius:20px;margin-left:4px;}
+.header-right{display:flex;align-items:center;gap:16px;}
+.header-right .tagline{font-size:0.82rem;color:var(--text2);}
+.dark-toggle{background:none;border:2px solid var(--bg3);width:40px;height:40px;border-radius:50%;cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;transition:all 0.3s;color:var(--text);}
+.dark-toggle:hover{border-color:var(--primary);background:rgba(22,163,74,0.1);}
 
-/* Hero */
-.hero{padding:80px 0 60px;text-align:center;position:relative;overflow:hidden;}
-.hero::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle at 50% 50%,rgba(22,163,74,0.08) 0%,transparent 50%);pointer-events:none;}
-.hero h1{font-size:3rem;font-weight:900;margin-bottom:16px;line-height:1.2;}
-.hero h1 .green{color:var(--primary-light);}
+/* ========== Hero ========== */
+.hero{padding:70px 0 50px;text-align:center;position:relative;overflow:hidden;background:var(--hero-grad);}
+.hero::before{content:'';position:absolute;top:-40%;left:-30%;width:160%;height:180%;background:radial-gradient(circle at 30% 40%,rgba(22,163,74,0.06) 0%,transparent 50%);pointer-events:none;}
+.hero h1{font-size:2.8rem;font-weight:900;margin-bottom:16px;line-height:1.25;position:relative;}
+.hero h1 .green{color:var(--primary);}
 .hero h1 .yellow{color:var(--accent);}
-.hero p{font-size:1.15rem;color:var(--text2);max-width:600px;margin:0 auto 40px;}
+.hero p{font-size:1.1rem;color:var(--text2);max-width:580px;margin:0 auto 36px;line-height:1.7;}
 
-/* Input Area */
-.input-area{max-width:700px;margin:0 auto;position:relative;}
-.input-area textarea{width:100%;min-height:100px;padding:20px;background:var(--bg2);border:2px solid var(--bg4);border-radius:var(--radius-lg);color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:1.05rem;resize:vertical;transition:border-color 0.3s;}
-.input-area textarea:focus{outline:none;border-color:var(--primary);}
-.input-area textarea::placeholder{color:var(--text3);}
-.submit-btn{margin-top:16px;width:100%;padding:16px 32px;background:linear-gradient(135deg,var(--primary) 0%,var(--primary-dark) 100%);color:#fff;border:none;border-radius:var(--radius);font-size:1.1rem;font-weight:700;cursor:pointer;transition:all 0.3s;font-family:'Noto Sans KR',sans-serif;display:flex;align-items:center;justify-content:center;gap:10px;}
-.submit-btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(22,163,74,0.4);}
+/* Search card */
+.search-card{max-width:720px;margin:0 auto;background:var(--bg2);border:1px solid var(--bg3);border-radius:var(--radius-lg);padding:28px;box-shadow:var(--shadow);position:relative;z-index:2;}
+.search-card textarea{width:100%;min-height:90px;padding:16px;background:var(--bg);border:2px solid var(--bg3);border-radius:var(--radius);color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:1rem;resize:vertical;transition:border-color 0.3s;}
+.search-card textarea:focus{outline:none;border-color:var(--primary);}
+.search-card textarea::placeholder{color:var(--text3);}
+.submit-btn{margin-top:14px;width:100%;padding:15px 32px;background:linear-gradient(135deg,var(--primary) 0%,var(--primary-dark) 100%);color:#fff;border:none;border-radius:var(--radius);font-size:1.05rem;font-weight:700;cursor:pointer;transition:all 0.3s;font-family:'Noto Sans KR',sans-serif;display:flex;align-items:center;justify-content:center;gap:10px;}
+.submit-btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(22,163,74,0.35);}
 .submit-btn:disabled{opacity:0.6;cursor:not-allowed;transform:none;box-shadow:none;}
 .submit-btn .spinner{display:none;width:20px;height:20px;border:3px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.8s linear infinite;}
 .submit-btn.loading .spinner{display:block;}
 .submit-btn.loading .btn-text{display:none;}
 @keyframes spin{to{transform:rotate(360deg);}}
 
-/* Examples */
-.examples{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:20px;}
-.example-chip{background:var(--bg3);border:1px solid var(--bg4);padding:8px 16px;border-radius:20px;font-size:0.85rem;cursor:pointer;transition:all 0.2s;color:var(--text2);}
+/* Example chips */
+.examples{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:16px;}
+.example-chip{background:var(--bg);border:1px solid var(--bg3);padding:7px 15px;border-radius:20px;font-size:0.83rem;cursor:pointer;transition:all 0.2s;color:var(--text2);}
 .example-chip:hover{background:var(--primary);border-color:var(--primary);color:#fff;}
 
-/* Coupang Banner */
-.coupang-banner{margin:40px auto;max-width:728px;text-align:center;}
-.coupang-banner a{display:block;}
-.coupang-banner img{max-width:100%;height:auto;border-radius:var(--radius);}
+/* Quick goal buttons */
+.quick-goals{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:20px;}
+.quick-goal{background:var(--bg2);border:2px solid var(--bg3);padding:10px 22px;border-radius:var(--radius);font-size:0.92rem;font-weight:600;cursor:pointer;transition:all 0.25s;color:var(--text);font-family:'Noto Sans KR',sans-serif;}
+.quick-goal:hover{border-color:var(--primary);color:var(--primary);background:rgba(22,163,74,0.06);transform:translateY(-2px);}
 
-/* Result Section */
-.result-section{padding:40px 0 80px;display:none;}
-.result-section.active{display:block;}
-.result-header{text-align:center;margin-bottom:40px;}
-.result-header h2{font-size:2rem;font-weight:900;margin-bottom:8px;}
-.result-header h2 .green{color:var(--primary-light);}
-.goal-badge{display:inline-block;background:rgba(22,163,74,0.15);border:1px solid rgba(22,163,74,0.3);color:var(--primary-light);padding:8px 20px;border-radius:20px;font-size:0.95rem;margin-top:8px;}
-
-/* Two Column Layout */
-.two-col{display:grid;grid-template-columns:1fr 300px;gap:30px;align-items:start;}
-
-/* Routine Table */
-.routine-section h3,.equip-section h3,.suppl-section h3{font-size:1.3rem;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
-.routine-table{width:100%;border-collapse:separate;border-spacing:0;background:var(--bg2);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow);}
-.routine-table thead{background:linear-gradient(135deg,var(--primary-dark),var(--primary));}
-.routine-table th{padding:14px 16px;text-align:left;font-weight:700;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.5px;color:#fff;}
-.routine-table td{padding:14px 16px;border-bottom:1px solid var(--bg3);font-size:0.95rem;}
-.routine-table tr:last-child td{border-bottom:none;}
-.routine-table tbody tr{transition:background 0.2s;}
-.routine-table tbody tr:hover{background:var(--bg3);}
-.muscle-tag{background:rgba(22,163,74,0.15);color:var(--primary-light);padding:3px 10px;border-radius:10px;font-size:0.8rem;font-weight:500;}
-
-/* Cards */
-.card{background:var(--bg2);border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow);border:1px solid var(--bg3);transition:transform 0.2s,border-color 0.2s;margin-bottom:16px;}
-.card:hover{transform:translateY(-3px);border-color:var(--primary);}
-.card-emoji{font-size:2rem;margin-bottom:8px;}
-.card-name{font-weight:700;font-size:1.05rem;margin-bottom:4px;}
-.card-price{color:var(--accent);font-weight:700;font-size:0.9rem;margin-bottom:6px;}
-.card-reason{color:var(--text2);font-size:0.88rem;margin-bottom:14px;line-height:1.5;}
-.coupang-btn{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,var(--accent),var(--accent-dark));color:#000;padding:10px 18px;border-radius:8px;font-size:0.88rem;font-weight:700;transition:all 0.2s;text-decoration:none !important;border:none;cursor:pointer;}
-.coupang-btn:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(245,158,11,0.4);text-decoration:none !important;}
-.coupang-btn img{width:16px;height:16px;}
-
-/* Sidebar */
-.sidebar{position:sticky;top:90px;}
-.sidebar .side-banner{background:var(--bg2);border-radius:var(--radius-lg);padding:20px;text-align:center;margin-bottom:16px;border:1px solid var(--bg3);}
-.sidebar .side-banner a{display:block;}
-.sidebar .side-banner img{max-width:100%;height:auto;border-radius:8px;}
-.sidebar .side-banner p{font-size:0.75rem;color:var(--text3);margin-top:8px;}
-
-/* Equipment Grid */
-.equip-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;}
-
-/* Supplement Grid */
-.suppl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;margin-top:30px;}
+/* Search counter & history */
+.search-meta{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;max-width:720px;margin:16px auto 0;}
+.search-counter{font-size:0.82rem;color:var(--text3);}
+.search-history{display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
+.search-history-label{font-size:0.78rem;color:var(--text3);margin-right:4px;}
+.history-chip{background:var(--bg3);padding:4px 12px;border-radius:14px;font-size:0.78rem;cursor:pointer;color:var(--text2);transition:all 0.2s;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.history-chip:hover{background:var(--primary);color:#fff;}
 
 /* Error */
-.error-msg{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:#f87171;padding:16px 20px;border-radius:var(--radius);text-align:center;margin-top:20px;display:none;}
+.error-msg{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.25);color:#ef4444;padding:14px 20px;border-radius:var(--radius);text-align:center;margin-top:16px;display:none;font-size:0.92rem;}
 .error-msg.active{display:block;}
 
-/* Footer */
-footer{background:var(--bg2);border-top:1px solid var(--bg3);padding:30px 0;margin-top:60px;}
-.footer-inner{text-align:center;}
-.footer-inner p{color:var(--text3);font-size:0.82rem;line-height:1.7;}
-.footer-inner .disclaimer{max-width:600px;margin:12px auto 0;color:var(--text3);font-size:0.75rem;line-height:1.6;opacity:0.8;}
+/* ========== Ad Banner ========== */
+.ad-banner{margin:32px auto;max-width:728px;text-align:center;position:relative;}
+.ad-banner a{display:block;}
+.ad-banner img{max-width:100%;height:auto;border-radius:var(--radius);}
+.ad-label{position:absolute;top:6px;right:6px;background:rgba(0,0,0,0.55);color:#fff;font-size:0.6rem;font-weight:700;padding:2px 7px;border-radius:4px;letter-spacing:0.5px;z-index:2;}
 
-/* Scroll to Top */
-.scroll-top{position:fixed;bottom:30px;right:30px;width:48px;height:48px;background:var(--primary);color:#fff;border:none;border-radius:50%;font-size:1.2rem;cursor:pointer;opacity:0;visibility:hidden;transition:all 0.3s;z-index:999;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(22,163,74,0.4);}
+/* ========== Result Section ========== */
+.result-section{padding:40px 0 60px;display:none;opacity:0;transform:translateY(24px);transition:opacity 0.6s ease,transform 0.6s ease;}
+.result-section.active{display:block;opacity:1;transform:translateY(0);}
+.result-header{text-align:center;margin-bottom:36px;}
+.result-header h2{font-size:1.9rem;font-weight:900;margin-bottom:8px;}
+.result-header h2 .green{color:var(--primary);}
+.goal-badge{display:inline-block;background:rgba(22,163,74,0.1);border:1px solid rgba(22,163,74,0.25);color:var(--primary);padding:8px 22px;border-radius:20px;font-size:0.92rem;margin-top:8px;font-weight:500;}
+
+/* Two Column */
+.two-col{display:grid;grid-template-columns:1fr 300px;gap:30px;align-items:start;}
+
+/* Timeline */
+.timeline{display:flex;gap:0;margin-bottom:32px;position:relative;}
+.timeline::before{content:'';position:absolute;top:28px;left:40px;right:40px;height:3px;background:var(--bg3);z-index:0;}
+.timeline-step{flex:1;text-align:center;position:relative;z-index:1;}
+.timeline-num{width:56px;height:56px;border-radius:50%;background:var(--primary);color:#fff;font-size:1.1rem;font-weight:900;display:inline-flex;align-items:center;justify-content:center;margin-bottom:10px;box-shadow:0 4px 16px rgba(22,163,74,0.3);}
+.timeline-label{font-size:0.82rem;font-weight:600;color:var(--text2);}
+
+/* Routine Table */
+.section-title{font-size:1.25rem;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.routine-table{width:100%;border-collapse:separate;border-spacing:0;background:var(--bg2);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow);}
+.routine-table thead{background:var(--table-head);}
+.routine-table th{padding:13px 16px;text-align:left;font-weight:700;font-size:0.82rem;text-transform:uppercase;letter-spacing:0.5px;color:#fff;}
+.routine-table td{padding:13px 16px;border-bottom:1px solid var(--bg3);font-size:0.93rem;}
+.routine-table tr:last-child td{border-bottom:none;}
+.routine-table tbody tr{transition:background 0.2s;}
+.routine-table tbody tr:hover{background:rgba(22,163,74,0.04);}
+.muscle-tag{display:inline-block;padding:3px 10px;border-radius:10px;font-size:0.78rem;font-weight:600;}
+.muscle-tag.chest{background:rgba(239,68,68,0.12);color:#ef4444;}
+.muscle-tag.back{background:rgba(59,130,246,0.12);color:#3b82f6;}
+.muscle-tag.legs{background:rgba(168,85,247,0.12);color:#a855f7;}
+.muscle-tag.shoulders{background:rgba(245,158,11,0.12);color:#f59e0b;}
+.muscle-tag.arms{background:rgba(236,72,153,0.12);color:#ec4899;}
+.muscle-tag.core{background:rgba(22,163,74,0.12);color:#16a34a;}
+.muscle-tag.cardio{background:rgba(6,182,212,0.12);color:#06b6d4;}
+.muscle-tag.full{background:rgba(139,92,246,0.12);color:#8b5cf6;}
+.muscle-tag.default{background:rgba(22,163,74,0.12);color:var(--primary);}
+
+/* Cards */
+.card{background:var(--bg2);border-radius:var(--radius-lg);padding:22px;box-shadow:var(--shadow);border:1px solid var(--card-border);transition:transform 0.25s ease,border-color 0.25s ease,box-shadow 0.25s ease;margin-bottom:16px;}
+.card:hover{transform:translateY(-4px);border-color:var(--primary);box-shadow:var(--shadow-lg);}
+.card-emoji{font-size:2.2rem;margin-bottom:8px;}
+.card-name{font-weight:700;font-size:1.05rem;margin-bottom:4px;}
+.card-price{display:inline-block;background:rgba(245,158,11,0.12);color:var(--accent-dark);font-weight:700;font-size:0.82rem;padding:3px 10px;border-radius:8px;margin-bottom:8px;}
+[data-theme="dark"] .card-price{color:var(--accent);}
+.card-reason{color:var(--text2);font-size:0.88rem;margin-bottom:14px;line-height:1.6;}
+.coupang-btn{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,var(--accent),var(--accent-dark));color:#000;padding:10px 18px;border-radius:8px;font-size:0.86rem;font-weight:700;transition:all 0.2s;text-decoration:none !important;border:none;cursor:pointer;}
+.coupang-btn:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(245,158,11,0.35);text-decoration:none !important;}
+
+/* Grids */
+.equip-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;}
+.suppl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;margin-top:30px;}
+
+/* Sidebar */
+.sidebar{position:sticky;top:85px;}
+.side-banner{background:var(--bg2);border-radius:var(--radius-lg);padding:18px;text-align:center;margin-bottom:16px;border:1px solid var(--card-border);position:relative;}
+.side-banner a{display:block;}
+.side-banner img{max-width:100%;height:auto;border-radius:8px;}
+.side-banner .ad-label-side{position:absolute;top:8px;right:8px;background:rgba(0,0,0,0.55);color:#fff;font-size:0.6rem;font-weight:700;padding:2px 7px;border-radius:4px;letter-spacing:0.5px;}
+.side-banner p{font-size:0.72rem;color:var(--text3);margin-top:8px;line-height:1.5;}
+
+/* Skeleton */
+.skeleton-wrap{display:none;max-width:900px;margin:30px auto;}
+.skeleton-wrap.active{display:block;}
+.skeleton{background:linear-gradient(90deg,var(--skeleton-a) 25%,var(--skeleton-b) 50%,var(--skeleton-a) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:var(--radius);margin-bottom:16px;}
+.skeleton.h1{height:32px;width:50%;margin:0 auto 20px;}
+.skeleton.table{height:220px;}
+.skeleton.card-sk{height:160px;}
+.skeleton.card-sk2{height:160px;}
+@keyframes shimmer{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+
+/* ========== Mid Ad Banner ========== */
+.mid-ad{margin:36px 0;text-align:center;position:relative;}
+.mid-ad a{display:block;}
+.mid-ad img{max-width:100%;max-width:728px;height:auto;border-radius:var(--radius);}
+
+/* ========== FAQ Accordion ========== */
+.faq-section{max-width:800px;margin:50px auto 0;padding:0 20px;}
+.faq-section h3{font-size:1.3rem;font-weight:700;margin-bottom:20px;text-align:center;}
+.faq-item{border:1px solid var(--bg3);border-radius:var(--radius);margin-bottom:10px;overflow:hidden;background:var(--bg2);transition:border-color 0.2s;}
+.faq-item:hover{border-color:var(--primary);}
+.faq-q{padding:16px 20px;cursor:pointer;font-weight:600;font-size:0.95rem;display:flex;justify-content:space-between;align-items:center;user-select:none;transition:background 0.2s;}
+.faq-q:hover{background:rgba(22,163,74,0.04);}
+.faq-q .arrow{transition:transform 0.3s;font-size:0.8rem;color:var(--text3);}
+.faq-item.open .faq-q .arrow{transform:rotate(180deg);}
+.faq-a{max-height:0;overflow:hidden;transition:max-height 0.35s ease,padding 0.35s ease;padding:0 20px;font-size:0.9rem;color:var(--text2);line-height:1.7;}
+.faq-item.open .faq-a{max-height:300px;padding:0 20px 16px;}
+
+/* ========== Footer (sticky) ========== */
+footer{background:var(--bg2);border-top:1px solid var(--bg3);padding:28px 0;margin-top:50px;transition:background 0.3s;}
+.footer-inner{text-align:center;}
+.footer-inner p{color:var(--text2);font-size:0.82rem;line-height:1.7;}
+.footer-inner .disclaimer{max-width:620px;margin:12px auto 0;color:var(--text3);font-size:0.74rem;line-height:1.7;opacity:0.9;}
+
+/* ========== Scroll to Top ========== */
+.scroll-top{position:fixed;bottom:30px;right:30px;width:46px;height:46px;background:var(--primary);color:#fff;border:none;border-radius:50%;font-size:1.1rem;cursor:pointer;opacity:0;visibility:hidden;transition:all 0.3s;z-index:999;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(22,163,74,0.35);}
 .scroll-top.visible{opacity:1;visibility:visible;}
 .scroll-top:hover{background:var(--primary-dark);transform:translateY(-3px);}
 
-/* Loading skeleton */
-.skeleton{background:linear-gradient(90deg,var(--bg3) 25%,var(--bg4) 50%,var(--bg3) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:var(--radius);height:200px;margin:20px 0;}
-@keyframes shimmer{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+/* ========== Fade-in animation ========== */
+.fade-in{opacity:0;transform:translateY(20px);transition:opacity 0.5s ease,transform 0.5s ease;}
+.fade-in.visible{opacity:1;transform:translateY(0);}
 
-/* Responsive */
+/* ========== Responsive ========== */
 @media(max-width:900px){
   .two-col{grid-template-columns:1fr;}
   .sidebar{position:static;display:grid;grid-template-columns:1fr 1fr;gap:16px;}
-  .hero h1{font-size:2.2rem;}
+  .hero h1{font-size:2rem;}
+  .timeline::before{left:20px;right:20px;}
+  .header-right .tagline{display:none;}
 }
 @media(max-width:600px){
-  .hero h1{font-size:1.7rem;}
-  .hero p{font-size:1rem;}
+  .hero{padding:50px 0 36px;}
+  .hero h1{font-size:1.6rem;}
+  .hero p{font-size:0.95rem;}
+  .search-card{padding:20px;}
   .routine-table{font-size:0.85rem;}
   .routine-table th,.routine-table td{padding:10px 10px;}
   .sidebar{grid-template-columns:1fr;}
   .equip-grid{grid-template-columns:1fr;}
+  .suppl-grid{grid-template-columns:1fr;}
   .examples{gap:6px;}
-  .example-chip{font-size:0.78rem;padding:6px 12px;}
+  .example-chip{font-size:0.76rem;padding:6px 11px;}
+  .quick-goals{gap:8px;}
+  .quick-goal{padding:8px 16px;font-size:0.84rem;}
+  .timeline-num{width:44px;height:44px;font-size:0.95rem;}
+  .timeline-label{font-size:0.74rem;}
 }
 </style>
 </head>
@@ -154,12 +255,17 @@ footer{background:var(--bg2);border-top:1px solid var(--bg3);padding:30px 0;marg
 <!-- Header -->
 <header>
   <div class="container header-inner">
-    <div class="logo">
-      <span class="logo-icon">💪</span>
-      Fit<span>Gear</span>
-      <span class="header-badge">AI</span>
+    <div class="header-left">
+      <div class="logo">
+        <span class="logo-icon">💪</span>
+        Fit<span>Gear</span>
+        <span class="header-badge">AI</span>
+      </div>
     </div>
-    <div style="font-size:0.85rem;color:var(--text2);">AI 맞춤 운동 추천</div>
+    <div class="header-right">
+      <span class="tagline">AI 맞춤 운동 추천</span>
+      <button class="dark-toggle" id="darkToggle" onclick="toggleDark()" title="다크모드 전환">🌙</button>
+    </div>
   </div>
 </header>
 
@@ -169,8 +275,8 @@ footer{background:var(--bg2);border-top:1px solid var(--bg3);padding:30px 0;marg
     <h1>목표를 말하면<br><span class="green">AI가 운동루틴</span>과<br><span class="yellow">운동기구</span>를 추천해요</h1>
     <p>"집에서 뱃살 빼고 싶어" 같이 운동 목표를 입력하면,<br>AI가 맞춤 루틴과 필요한 기구를 알려드려요.</p>
 
-    <div class="input-area">
-      <textarea id="goalInput" placeholder="운동 목표를 자유롭게 입력하세요. 예: 집에서 뱃살 빼고 싶어"></textarea>
+    <div class="search-card">
+      <textarea id="goalInput" placeholder="운동 목표를 자유롭게 입력하세요&#10;예: 집에서 뱃살 빼고 싶어, 어깨 넓어지고 싶어"></textarea>
       <button class="submit-btn" id="submitBtn" onclick="getRecommendation()">
         <span class="btn-text">🤖 AI 루틴 추천 받기</span>
         <div class="spinner"></div>
@@ -184,30 +290,72 @@ footer{background:var(--bg2);border-top:1px solid var(--bg3);padding:30px 0;marg
       </div>
     </div>
 
+    <!-- Quick Goal Buttons -->
+    <div class="quick-goals">
+      <button class="quick-goal" onclick="quickGoal('다이어트')">🔥 다이어트</button>
+      <button class="quick-goal" onclick="quickGoal('근력강화')">💪 근력강화</button>
+      <button class="quick-goal" onclick="quickGoal('유연성')">🧘 유연성</button>
+      <button class="quick-goal" onclick="quickGoal('체력 향상')">🏃 체력</button>
+      <button class="quick-goal" onclick="quickGoal('재활 운동')">🩹 재활</button>
+    </div>
+
+    <!-- Search meta (counter + history) -->
+    <div class="search-meta" id="searchMeta" style="display:none;">
+      <div class="search-counter" id="searchCounter"></div>
+      <div class="search-history" id="searchHistory"></div>
+    </div>
+
     <div class="error-msg" id="errorMsg"></div>
   </div>
 </section>
 
-<!-- Coupang Banner Top -->
-<div class="coupang-banner">
+<!-- Ad Banner Top -->
+<div class="ad-banner">
+  <span class="ad-label">AD</span>
   <a href="https://link.coupang.com/a/cmb4De" target="_blank" rel="noopener noreferrer" referrerpolicy="unsafe-url">
     <img src="https://ads-partners.coupang.com/banners/764064?subId=fitgear&traceId=V0-301-f1e5ab2b58ee9cf1-I764064&w=728&h=90" alt="쿠팡 추천">
   </a>
 </div>
 
+<!-- Skeleton Loading -->
+<div class="skeleton-wrap" id="skeletonWrap">
+  <div class="skeleton h1"></div>
+  <div class="skeleton table"></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;">
+    <div class="skeleton card-sk"></div>
+    <div class="skeleton card-sk2"></div>
+  </div>
+</div>
+
 <!-- Result Section -->
 <section class="result-section" id="resultSection">
   <div class="container">
-    <div class="result-header">
+    <div class="result-header fade-in">
       <h2>🎯 맞춤 <span class="green">운동 플랜</span></h2>
       <div class="goal-badge" id="goalBadge"></div>
     </div>
 
+    <!-- Visual Timeline -->
+    <div class="timeline fade-in">
+      <div class="timeline-step">
+        <div class="timeline-num">1</div>
+        <div class="timeline-label">운동 루틴 확인</div>
+      </div>
+      <div class="timeline-step">
+        <div class="timeline-num">2</div>
+        <div class="timeline-label">기구 준비하기</div>
+      </div>
+      <div class="timeline-step">
+        <div class="timeline-num">3</div>
+        <div class="timeline-label">보충제로 마무리</div>
+      </div>
+    </div>
+
     <div class="two-col">
       <div class="main-content">
-        <!-- Routine -->
-        <div class="routine-section">
-          <h3>🏋️ 추천 운동 루틴</h3>
+        <!-- Step 1: Routine -->
+        <div class="routine-section fade-in">
+          <h3 class="section-title">🏋️ 추천 운동 루틴</h3>
           <table class="routine-table">
             <thead>
               <tr><th>운동</th><th>세트</th><th>반복</th><th>부위</th></tr>
@@ -216,15 +364,23 @@ footer{background:var(--bg2);border-top:1px solid var(--bg3);padding:30px 0;marg
           </table>
         </div>
 
-        <!-- Equipment -->
-        <div class="equip-section" style="margin-top:40px;">
-          <h3>🛒 추천 운동기구</h3>
+        <!-- Mid Ad -->
+        <div class="mid-ad fade-in" style="margin-top:36px;">
+          <span class="ad-label">AD</span>
+          <a href="https://link.coupang.com/a/cmb4De" target="_blank" rel="noopener noreferrer" referrerpolicy="unsafe-url">
+            <img src="https://ads-partners.coupang.com/banners/764064?subId=fitgear&traceId=V0-301-f1e5ab2b58ee9cf1-I764064&w=728&h=90" alt="쿠팡 추천">
+          </a>
+        </div>
+
+        <!-- Step 2: Equipment -->
+        <div class="equip-section fade-in" style="margin-top:36px;">
+          <h3 class="section-title">🛒 추천 운동기구</h3>
           <div class="equip-grid" id="equipGrid"></div>
         </div>
 
-        <!-- Supplements -->
-        <div class="suppl-section" id="supplSection" style="margin-top:40px;display:none;">
-          <h3>💊 추천 보충제</h3>
+        <!-- Step 3: Supplements -->
+        <div class="suppl-section fade-in" id="supplSection" style="margin-top:36px;display:none;">
+          <h3 class="section-title">💊 추천 보충제</h3>
           <div class="suppl-grid" id="supplGrid"></div>
         </div>
       </div>
@@ -232,12 +388,14 @@ footer{background:var(--bg2);border-top:1px solid var(--bg3);padding:30px 0;marg
       <!-- Sidebar -->
       <div class="sidebar">
         <div class="side-banner">
+          <span class="ad-label-side">AD</span>
           <a href="https://link.coupang.com/a/cmb4De" target="_blank" rel="noopener noreferrer" referrerpolicy="unsafe-url">
             <img src="https://ads-partners.coupang.com/banners/764064?subId=fitgear_side&traceId=V0-301-f1e5ab2b58ee9cf1-I764064&w=300&h=250" alt="쿠팡 추천">
           </a>
-          <p>이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</p>
+          <p>이 포스팅은 쿠팡 파트너스 활동의 일환으로,<br>이에 따른 일정액의 수수료를 제공받습니다.</p>
         </div>
         <div class="side-banner">
+          <span class="ad-label-side">AD</span>
           <a href="https://link.coupang.com/a/cmb4De" target="_blank" rel="noopener noreferrer" referrerpolicy="unsafe-url">
             <img src="https://ads-partners.coupang.com/banners/764064?subId=fitgear_side&traceId=V0-301-f1e5ab2b58ee9cf1-I764064&w=300&h=250" alt="쿠팡 추천">
           </a>
@@ -246,6 +404,47 @@ footer{background:var(--bg2);border-top:1px solid var(--bg3);padding:30px 0;marg
     </div>
   </div>
 </section>
+
+<!-- FAQ -->
+<section class="faq-section">
+  <h3>❓ 자주 묻는 질문</h3>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">
+      FitGear는 어떻게 추천해주나요?
+      <span class="arrow">▼</span>
+    </div>
+    <div class="faq-a">OpenAI 기반 AI가 사용자의 운동 목표를 분석하여, 목표에 최적화된 운동 루틴과 필요한 운동기구, 보충제를 자동으로 추천합니다.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">
+      추천 결과가 정확한가요?
+      <span class="arrow">▼</span>
+    </div>
+    <div class="faq-a">AI가 일반적인 피트니스 가이드라인을 기반으로 추천하지만, 개인의 건강 상태에 따라 다를 수 있습니다. 전문가 상담을 병행하시길 권장합니다.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">
+      비용이 발생하나요?
+      <span class="arrow">▼</span>
+    </div>
+    <div class="faq-a">FitGear 서비스 이용은 완전 무료입니다. 추천된 운동기구 구매 시 쿠팡 파트너스를 통해 일정 수수료를 받을 수 있습니다.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">
+      모바일에서도 이용할 수 있나요?
+      <span class="arrow">▼</span>
+    </div>
+    <div class="faq-a">네, 모든 기기(PC, 태블릿, 모바일)에서 최적화된 반응형 디자인으로 편리하게 이용하실 수 있습니다.</div>
+  </div>
+</section>
+
+<!-- Bottom Ad Banner -->
+<div class="ad-banner" style="margin-top:40px;">
+  <span class="ad-label">AD</span>
+  <a href="https://link.coupang.com/a/cmb4De" target="_blank" rel="noopener noreferrer" referrerpolicy="unsafe-url">
+    <img src="https://ads-partners.coupang.com/banners/764064?subId=fitgear&traceId=V0-301-f1e5ab2b58ee9cf1-I764064&w=728&h=90" alt="쿠팡 추천">
+  </a>
+</div>
 
 <!-- Footer -->
 <footer>
@@ -263,20 +462,81 @@ footer{background:var(--bg2);border-top:1px solid var(--bg3);padding:30px 0;marg
 <button class="scroll-top" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
 
 <script>
-// --- API Key (obfuscated) ---
+// ========== API Key (obfuscated, preserved) ==========
 const _EK = 'LawFinder2026!@#';
 function _d(e){const d=atob(e);let r='';for(let i=0;i<d.length;i++)r+=String.fromCharCode(d.charCodeAt(i)^_EK.charCodeAt(i%_EK.length));return r;}
 const _KEYS = { ai: _d('PwpaNhsBDkgIRFNFQEoVSjgRQiIQXwsgFHADfgJVdFV+KS4ALTQrLh1XAGsCVCtqDlIhBDMEKhEwYXt4UxkFUQALPwIOLzs3RlRRU05pFmYrCyN1KwIGDjR4Y2VnGBBIeQtCBw4HISQqY3FCWUh2YhZYIApRBBcwPmpyWFtoLnwWVCI2LwFRCTNDdntVdHkVHBEoMFpYJlc3VkJjUE83Ty4xAAc=') };
 
-// --- Helpers ---
+// ========== Dark Mode ==========
+function initDark() {
+  const saved = localStorage.getItem('fitgear-theme');
+  if (saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    document.getElementById('darkToggle').textContent = '☀️';
+  }
+}
+function toggleDark() {
+  const html = document.documentElement;
+  const btn = document.getElementById('darkToggle');
+  if (html.getAttribute('data-theme') === 'dark') {
+    html.removeAttribute('data-theme');
+    btn.textContent = '🌙';
+    localStorage.setItem('fitgear-theme', 'light');
+  } else {
+    html.setAttribute('data-theme', 'dark');
+    btn.textContent = '☀️';
+    localStorage.setItem('fitgear-theme', 'dark');
+  }
+}
+initDark();
+
+// ========== Search Counter & History ==========
+let searchCount = parseInt(localStorage.getItem('fitgear-count') || '0');
+let searchHist = JSON.parse(localStorage.getItem('fitgear-history') || '[]');
+
+function updateSearchMeta() {
+  const meta = document.getElementById('searchMeta');
+  if (searchCount === 0 && searchHist.length === 0) { meta.style.display = 'none'; return; }
+  meta.style.display = 'flex';
+  document.getElementById('searchCounter').textContent = '총 ' + searchCount + '회 검색';
+  const histEl = document.getElementById('searchHistory');
+  if (searchHist.length > 0) {
+    histEl.innerHTML = '<span class="search-history-label">최근:</span>' +
+      searchHist.slice(0, 5).map(h => '<span class="history-chip" onclick="setFromHistory(this)" title="' + h + '">' + (h.length > 14 ? h.slice(0, 14) + '...' : h) + '</span>').join('');
+  } else {
+    histEl.innerHTML = '';
+  }
+}
+
+function addToHistory(query) {
+  searchCount++;
+  localStorage.setItem('fitgear-count', searchCount);
+  searchHist = searchHist.filter(h => h !== query);
+  searchHist.unshift(query);
+  if (searchHist.length > 10) searchHist = searchHist.slice(0, 10);
+  localStorage.setItem('fitgear-history', JSON.stringify(searchHist));
+  updateSearchMeta();
+}
+
+function setFromHistory(el) {
+  document.getElementById('goalInput').value = el.getAttribute('title');
+  document.getElementById('goalInput').focus();
+}
+updateSearchMeta();
+
+// ========== Helpers ==========
 function setExample(el) {
   document.getElementById('goalInput').value = el.textContent;
   document.getElementById('goalInput').focus();
 }
 
+function quickGoal(goal) {
+  document.getElementById('goalInput').value = goal + ' 목표에 맞는 홈트레이닝 루틴 추천해줘';
+  getRecommendation();
+}
+
 function cleanJson(raw) {
   let s = raw.trim();
-  // Remove markdown code fences
   s = s.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '');
   s = s.trim();
   return JSON.parse(s);
@@ -286,14 +546,57 @@ function makeCoupangUrl(query) {
   return `https://www.coupang.com/np/search?q=${encodeURIComponent(query)}&channel=user&src=1032001&spec=10305010&addtag=400&ctag=fitgear&lptag=AF7220529`;
 }
 
-// --- Scroll to Top ---
+// ========== Muscle tag color mapping ==========
+function getMuscleClass(muscle) {
+  const m = (muscle || '').toLowerCase();
+  if (m.includes('가슴') || m.includes('흉')) return 'chest';
+  if (m.includes('등') || m.includes('배')) return 'back';
+  if (m.includes('하체') || m.includes('허벅') || m.includes('다리') || m.includes('둔근') || m.includes('종아리')) return 'legs';
+  if (m.includes('어깨') || m.includes('삼각')) return 'shoulders';
+  if (m.includes('팔') || m.includes('이두') || m.includes('삼두')) return 'arms';
+  if (m.includes('코어') || m.includes('복근') || m.includes('복부')) return 'core';
+  if (m.includes('유산소') || m.includes('심폐') || m.includes('전신')) return 'cardio';
+  if (m.includes('전신')) return 'full';
+  return 'default';
+}
+
+// ========== FAQ ==========
+function toggleFaq(el) {
+  const item = el.parentElement;
+  item.classList.toggle('open');
+}
+
+// ========== Scroll to Top ==========
 window.addEventListener('scroll', () => {
   const btn = document.getElementById('scrollTopBtn');
   if (window.scrollY > 400) btn.classList.add('visible');
   else btn.classList.remove('visible');
 });
 
-// --- Main Function ---
+// ========== Intersection Observer for fade-in ==========
+const fadeObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1 });
+
+function observeFadeIns() {
+  document.querySelectorAll('.fade-in').forEach(el => fadeObserver.observe(el));
+}
+
+// ========== Error ==========
+function showError(msg) {
+  const el = document.getElementById('errorMsg');
+  el.textContent = msg;
+  el.classList.add('active');
+}
+function hideError() {
+  document.getElementById('errorMsg').classList.remove('active');
+}
+
+// ========== Main Function ==========
 async function getRecommendation() {
   const goal = document.getElementById('goalInput').value.trim();
   if (!goal) { showError('운동 목표를 입력해주세요!'); return; }
@@ -302,6 +605,12 @@ async function getRecommendation() {
   btn.disabled = true;
   btn.classList.add('loading');
   hideError();
+
+  // Show skeleton, hide previous result
+  document.getElementById('skeletonWrap').classList.add('active');
+  const resultSection = document.getElementById('resultSection');
+  resultSection.classList.remove('active');
+  resultSection.style.display = 'none';
 
   const systemPrompt = `당신은 운동/피트니스 전문가입니다. 사용자의 목표에 맞는 운동 루틴과 필요한 운동기구를 추천합니다. 반드시 아래 JSON 형식으로만 응답하세요. JSON 외 다른 텍스트는 포함하지 마세요.
 {"goal":"목표정리","routine":[{"name":"운동명","sets":"세트수","reps":"반복수","muscle":"부위","emoji":"이모지"}],"equipment":[{"name":"기구명","price":"가격대","reason":"필요이유","emoji":"이모지","searchQuery":"쿠팡검색어"}],"supplements":[{"name":"보충제","reason":"이유","searchQuery":"쿠팡검색어"}]}`;
@@ -328,27 +637,21 @@ async function getRecommendation() {
     const data = await res.json();
     const raw = data.choices[0].message.content;
     const result = cleanJson(raw);
+
+    addToHistory(goal);
     renderResult(result, goal);
   } catch (err) {
     showError('추천을 가져오는 중 오류가 발생했습니다: ' + err.message);
   } finally {
     btn.disabled = false;
     btn.classList.remove('loading');
+    document.getElementById('skeletonWrap').classList.remove('active');
   }
-}
-
-function showError(msg) {
-  const el = document.getElementById('errorMsg');
-  el.textContent = msg;
-  el.classList.add('active');
-}
-function hideError() {
-  document.getElementById('errorMsg').classList.remove('active');
 }
 
 function renderResult(data, goal) {
   // Goal badge
-  document.getElementById('goalBadge').textContent = `🎯 ${data.goal || goal}`;
+  document.getElementById('goalBadge').textContent = '🎯 ' + (data.goal || goal);
 
   // Routine table
   const tbody = document.getElementById('routineBody');
@@ -357,7 +660,7 @@ function renderResult(data, goal) {
       <td>${r.emoji || '🏃'} ${r.name}</td>
       <td>${r.sets}</td>
       <td>${r.reps}</td>
-      <td><span class="muscle-tag">${r.muscle}</span></td>
+      <td><span class="muscle-tag ${getMuscleClass(r.muscle)}">${r.muscle}</span></td>
     </tr>
   `).join('');
 
@@ -367,7 +670,7 @@ function renderResult(data, goal) {
     <div class="card">
       <div class="card-emoji">${eq.emoji || '🏋️'}</div>
       <div class="card-name">${eq.name}</div>
-      <div class="card-price">${eq.price || ''}</div>
+      ${eq.price ? '<div class="card-price">' + eq.price + '</div>' : ''}
       <div class="card-reason">${eq.reason}</div>
       <a class="coupang-btn" href="${makeCoupangUrl(eq.searchQuery)}" target="_blank" rel="noopener noreferrer">
         🛒 쿠팡에서 구매
@@ -394,13 +697,26 @@ function renderResult(data, goal) {
     supplSection.style.display = 'none';
   }
 
-  // Show result section and scroll
+  // Show result with fade-in animation
   const resultSection = document.getElementById('resultSection');
-  resultSection.classList.add('active');
-  setTimeout(() => {
-    resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, 100);
+  resultSection.style.display = 'block';
+  // Force reflow then animate
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      resultSection.classList.add('active');
+      observeFadeIns();
+      resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
 }
+
+// Enter key submit
+document.getElementById('goalInput').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    getRecommendation();
+  }
+});
 </script>
 </body>
 </html>
